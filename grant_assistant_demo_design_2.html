@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grant Contract Assistant - Azure Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .azure-header {
+            background: #0078d4;
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .ms-logo {
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0078d4;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #106ebe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            padding: 20px;
+            height: fit-content;
+        }
+
+        .sidebar h3 {
+            color: #323130;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .grant-list {
+            list-style: none;
+        }
+
+        .grant-item {
+            padding: 12px;
+            margin-bottom: 8px;
+            background: #f3f2f1;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .grant-item:hover {
+            background: #e1dfdd;
+            border-left-color: #0078d4;
+        }
+
+        .grant-item.active {
+            background: #deecf9;
+            border-left-color: #0078d4;
+        }
+
+        .grant-name {
+            font-weight: 600;
+            color: #323130;
+            margin-bottom: 4px;
+        }
+
+        .grant-details {
+            font-size: 12px;
+            color: #605e5c;
+        }
+
+        .chat-container {
+            flex: 1;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #edebe9;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .bot-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #0078d4, #106ebe);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .chat-title {
+            flex: 1;
+        }
+
+        .chat-title h2 {
+            color: #323130;
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .chat-subtitle {
+            color: #605e5c;
+            font-size: 14px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #107c10;
+            font-size: 12px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #107c10;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            max-width: 85%;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background: #0078d4;
+            color: white;
+        }
+
+        .message.bot .message-avatar {
+            background: linear-gradient(135deg, #0078d4, #106ebe);
+            color: white;
+        }
+
+        .message-content {
+            background: #f3f2f1;
+            padding: 12px 16px;
+            border-radius: 18px;
+            position: relative;
+        }
+
+        .message.user .message-content {
+            background: #0078d4;
+            color: white;
+        }
+
+        .message.bot .message-content {
+            background: #f8f9fa;
+            border: 1px solid #edebe9;
+        }
+
+        .citation {
+            background: #fff4ce;
+            border: 1px solid #fde047;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+
+        .citation-title {
+            font-weight: 600;
+            color: #a16207;
+            margin-bottom: 4px;
+        }
+
+        .citation-text {
+            color: #713f12;
+        }
+
+        .chat-input-container {
+            padding: 20px;
+            border-top: 1px solid #edebe9;
+            background: #fafafa;
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .chat-input {
+            flex: 1;
+            border: 2px solid #edebe9;
+            border-radius: 20px;
+            padding: 12px 16px;
+            font-size: 14px;
+            resize: none;
+            max-height: 120px;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .chat-input:focus {
+            border-color: #0078d4;
+        }
+
+        .send-button {
+            background: #0078d4;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .send-button:hover:not(:disabled) {
+            background: #106ebe;
+        }
+
+        .send-button:disabled {
+            background: #a19f9d;
+            cursor: not-allowed;
+        }
+
+        .suggested-questions {
+            margin-bottom: 15px;
+        }
+
+        .suggested-questions h4 {
+            color: #605e5c;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .suggestion-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .suggestion-chip {
+            background: #e1dfdd;
+            border: 1px solid #d2d0ce;
+            border-radius: 16px;
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .suggestion-chip:hover {
+            background: #deecf9;
+            border-color: #0078d4;
+            color: #0078d4;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #605e5c;
+            font-style: italic;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .typing-indicator.show {
+            opacity: 1;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #a19f9d;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+
+        .analytics-panel {
+            width: 300px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            padding: 20px;
+            height: fit-content;
+        }
+
+        .analytics-title {
+            color: #323130;
+            margin-bottom: 20px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .metric-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #0078d4;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0078d4;
+            margin-bottom: 4px;
+        }
+
+        .metric-label {
+            color: #605e5c;
+            font-size: 12px;
+        }
+
+        .recent-activity {
+            margin-top: 20px;
+        }
+
+        .activity-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #edebe9;
+            font-size: 12px;
+        }
+
+        .activity-time {
+            color: #a19f9d;
+        }
+
+        .activity-text {
+            color: #323130;
+            margin-top: 2px;
+        }
+
+        @media (max-width: 1200px) {
+            .analytics-panel {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+                padding: 10px;
+            }
+            
+            .sidebar {
+                width: 100%;
+                order: 2;
+            }
+            
+            .chat-container {
+                order: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="azure-header">
+        <div class="logo-section">
+            <div class="ms-logo">M</div>
+            <span>Research Enterprise - Grant Contract Assistant</span>
+        </div>
+        <div class="user-info">
+            <span>Dr. Sarah Chen</span>
+            <div class="avatar">SC</div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <h3>📋 Active Grant Contracts</h3>
+            <ul class="grant-list">
+                <li class="grant-item active" data-grant="cihr-2024">
+                    <div class="grant-name">CIHR Operating Grant</div>
+                    <div class="grant-details">$2.4M • Expires: Dec 2026<br>Status: Active</div>
+                </li>
+                <li class="grant-item" data-grant="nserc-2023">
+                    <div class="grant-name">NSERC Discovery Grant</div>
+                    <div class="grant-details">$180K • Expires: Mar 2026<br>Status: Active</div>
+                </li>
+                <li class="grant-item" data-grant="nih-2024">
+                    <div class="grant-name">NIH R01 Grant</div>
+                    <div class="grant-details">$1.8M USD • Expires: Aug 2027<br>Status: Active</div>
+                </li>
+                <li class="grant-item" data-grant="cfi-2023">
+                    <div class="grant-name">CFI Infrastructure Grant</div>
+                    <div class="grant-details">$890K • Expires: Nov 2025<br>Status: Active</div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="bot-avatar">🤖</div>
+                <div class="chat-title">
+                    <h2>Grant Contract Assistant</h2>
+                    <div class="chat-subtitle">Powered by Azure OpenAI & AI Search</div>
+                </div>
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    Online
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot">
+                    <div class="message-avatar">🤖</div>
+                    <div class="message-content">
+                        <p>Hello Dr. Chen! I'm your AI-powered Grant Contract Assistant. I can help you quickly find information about your active grants, including allowable expenses, reporting deadlines, amendment procedures, and more.</p>
+                        <p>I currently have access to your 4 active grant contracts and can provide answers with direct citations from the original documents.</p>
+                        
+                        <div class="suggested-questions">
+                            <h4>Try asking me:</h4>
+                            <div class="suggestion-chips">
+                                <div class="suggestion-chip" onclick="sendSuggestedQuestion('What are the allowable expenses for my CIHR grant?')">Allowable expenses</div>
+                                <div class="suggestion-chip" onclick="sendSuggestedQuestion('When is my next NIH progress report due?')">Report deadlines</div>
+                                <div class="suggestion-chip" onclick="sendSuggestedQuestion('Can I purchase equipment over $25,000?')">Equipment purchases</div>
+                                <div class="suggestion-chip" onclick="sendSuggestedQuestion('What is the indirect cost rate for NSERC?')">Indirect costs</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="message-avatar">🤖</div>
+                <span>Grant Assistant is typing</span>
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+
+            <div class="chat-input-container">
+                <div class="input-wrapper">
+                    <textarea 
+                        class="chat-input" 
+                        id="chatInput" 
+                        placeholder="Ask me anything about your grant contracts..."
+                        rows="1"
+                    ></textarea>
+                    <button class="send-button" id="sendButton" onclick="sendMessage()">
+                        ➤
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="analytics-panel">
+            <h3 class="analytics-title">
+                📊 Usage Analytics
+            </h3>
+            
+            <div class="metric-card">
+                <div class="metric-value">127</div>
+                <div class="metric-label">Questions This Month</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-value">94%</div>
+                <div class="metric-label">Accuracy Rate</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-value">3.2s</div>
+                <div class="metric-label">Avg Response Time</div>
+            </div>
+
+            <div class="recent-activity">
+                <h4>🕒 Recent Activity</h4>
+                <div class="activity-item">
+                    <div class="activity-time">2 hours ago</div>
+                    <div class="activity-text">Dr. Martinez asked about NIH budget modifications</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-time">5 hours ago</div>
+                    <div class="activity-text">Research Admin queried CIHR reporting requirements</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-time">1 day ago</div>
+                    <div class="activity-text">Dr. Johnson checked equipment approval limits</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentGrant = 'cihr-2024';
+        let isTyping = false;
+
+        const grantData = {
+            'cihr-2024': {
+                name: 'CIHR Operating Grant',
+                value: '$2.4M',
+                expires: 'December 2026'
+            },
+            'nserc-2023': {
+                name: 'NSERC Discovery Grant', 
+                value: '$180K',
+                expires: 'March 2026'
+            },
+            'nih-2024': {
+                name: 'NIH R01 Grant',
+                value: '$1.8M USD',
+                expires: 'August 2027'
+            },
+            'cfi-2023': {
+                name: 'CFI Infrastructure Grant',
+                value: '$890K', 
+                expires: 'November 2025'
+            }
+        };
+
+        const responses = {
+            'allowable expenses': {
+                answer: "For your CIHR Operating Grant, allowable expenses include personnel costs (salaries, benefits), supplies and materials directly related to research, travel for research purposes, and knowledge dissemination activities. Equipment purchases under $25,000 are generally allowed, while larger equipment requires special justification.",
+                citation: {
+                    title: "CIHR Operating Grant Agreement - Section 4.2",
+                    text: "Eligible expenses shall include personnel costs, research supplies, travel, and equipment purchases not exceeding $25,000 CAD without prior approval."
+                }
+            },
+            'report deadlines': {
+                answer: "Your NIH R01 Grant requires annual progress reports due 60 days before the start of each budget period. For your current grant period, the next progress report is due on June 1, 2025. The final report is due 90 days after the project end date.",
+                citation: {
+                    title: "NIH R01 Grant Agreement - Section 7.1",
+                    text: "Annual progress reports must be submitted no later than 60 days prior to the beginning of each budget period, with final reports due within 90 days of project completion."
+                }
+            },
+            'equipment purchases': {
+                answer: "Equipment purchases over $25,000 require pre-approval from the funding agency. For your CIHR grant, you must submit a budget modification request through ResearchNet. The request should include equipment specifications, justification for need, and three vendor quotes.",
+                citation: {
+                    title: "CIHR Operating Grant Agreement - Section 4.3",
+                    text: "Equipment purchases exceeding $25,000 CAD require prior written approval and must be supported by competitive quotations and detailed justification."
+                }
+            },
+            'indirect cost rate': {
+                answer: "Your NSERC Discovery Grant has an indirect cost rate of 25% of the direct eligible costs. This is calculated automatically and paid separately to your institution. The indirect costs are not included in your direct grant allocation of $180,000.",
+                citation: {
+                    title: "NSERC Discovery Grant Terms - Section 3.4",
+                    text: "Indirect costs shall be calculated at 25% of eligible direct costs and will be paid directly to the administering institution."
+                }
+            }
+        };
+
+        function sendSuggestedQuestion(question) {
+            document.getElementById('chatInput').value = question;
+            sendMessage();
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message || isTyping) return;
+            
+            // Add user message
+            addMessage(message, true);
+            input.value = '';
+            
+            // Show typing indicator
+            showTyping();
+            
+            // Simulate AI response delay
+            setTimeout(() => {
+                hideTyping();
+                generateResponse(message);
+            }, 1500 + Math.random() * 1000);
+        }
+
+        function addMessage(content, isUser = false, citation = null) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            
+            let citationHtml = '';
+            if (citation) {
+                citationHtml = `
+                    <div class="citation">
+                        <div class="citation-title">📑 ${citation.title}</div>
+                        <div class="citation-text">"${citation.text}"</div>
+                    </div>
+                `;
+            }
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${isUser ? 'SC' : '🤖'}</div>
+                <div class="message-content">
+                    <p>${content}</p>
+                    ${citationHtml}
+                </div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function generateResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            let response = null;
+            
+            // Simple keyword matching for demo
+            if (lowerMessage.includes('allowable') || lowerMessage.includes('expense')) {
+                response = responses['allowable expenses'];
+            } else if (lowerMessage.includes('report') || lowerMessage.includes('deadline')) {
+                response = responses['report deadlines'];
+            } else if (lowerMessage.includes('equipment') || lowerMessage.includes('25000') || lowerMessage.includes('25,000')) {
+                response = responses['equipment purchases'];
+            } else if (lowerMessage.includes('indirect') || lowerMessage.includes('rate') || lowerMessage.includes('nserc')) {
+                response = responses['indirect cost rate'];
+            } else {
+                // Default response
+                const grant = grantData[currentGrant];
+                response = {
+                    answer: `I can help you with questions about your ${grant.name} (${grant.value}, expires ${grant.expires}). Please ask about specific topics like allowable expenses, reporting requirements, budget modifications, or compliance matters. I'll provide answers with direct citations from your grant agreement.`,
+                    citation: null
+                };
+            }
+            
+            addMessage(response.answer, false, response.citation);
+            
+            // Update analytics (simulated)
+            updateAnalytics();
+        }
+
+        function showTyping() {
+            isTyping = true;
+            document.getElementById('typingIndicator').classList.add('show');
+            document.getElementById('sendButton').disabled = true;
+        }
+
+        function hideTyping() {
+            isTyping = false;
+            document.getElementById('typingIndicator').classList.remove('show');
+            document.getElementById('sendButton').disabled = false;
+        }
+
+        function updateAnalytics() {
+            // Simulate real-time analytics updates
+            const questionCount = document.querySelector('.metric-value');
+            const currentCount = parseInt(questionCount.textContent);
+            questionCount.textContent = currentCount + 1;
+        }
+
+        // Handle grant selection
+        document.querySelectorAll('.grant-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.grant-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                currentGrant = this.dataset.grant;
+                
+                const grant = grantData[currentGrant];
+                addMessage(`Switched to ${grant.name}. I now have access to this grant's contract details and can answer specific questions about its terms and conditions.`, false);
+            });
+        });
+
+        // Handle Enter key in input
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Auto-resize textarea
+        document.getElementById('chatInput').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
+
+        // Simulate real-time updates
+        setInterval(() => {
+            const statusDot = document.querySelector('.status-dot');
+            statusDot.style.background = statusDot.style.background === 'rgb(16, 124, 16)' ? '#107c10' : '#28a745';
+        }, 3000);
+
+        console.log('🚀 Grant Contract Assistant Demo Loaded');
+        console.log('📊 Features: Azure OpenAI, AI Search, Teams Integration, Salesforce Permissions');
+        console.log('🔐 Authentication: Microsoft Entra ID (SSO)');
+    </script>
+</body>
+</html>

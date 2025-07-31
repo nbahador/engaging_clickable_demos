@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Grant Contract Assistant - Enterprise Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Enterprise Color Palette */
+            --primary-navy: #1B365D;
+            --primary-blue: #2E5BBA;
+            --secondary-blue: #4A90E2;
+            --accent-teal: #0D7377;
+            --light-blue: #E8F4FD;
+            --surface-white: #FFFFFF;
+            --surface-light: #F8FAFB;
+            --surface-medium: #F1F5F9;
+            --border-light: #E2E8F0;
+            --border-medium: #CBD5E1;
+            --text-primary: #1E293B;
+            --text-secondary: #475569;
+            --text-tertiary: #64748B;
+            --text-white: #FFFFFF;
+            --success-green: #059669;
+            --warning-amber: #D97706;
+            --error-red: #DC2626;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--surface-light) 0%, var(--light-blue) 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        .enterprise-header {
+            background: var(--primary-navy);
+            color: var(--text-white);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            z-index: 100;
+        }
+
+        .enterprise-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-teal));
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .enterprise-logo {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-white);
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .header-title {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--light-blue);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary-blue), var(--accent-teal));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-white);
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+            gap: 24px;
+            padding: 24px;
+        }
+
+        .sidebar {
+            width: 320px;
+            background: var(--surface-white);
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            padding: 24px;
+            height: fit-content;
+            border: 1px solid var(--border-light);
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .sidebar-title {
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+        }
+
+        .grant-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .grant-item {
+            padding: 16px;
+            background: var(--surface-light);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .grant-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: transparent;
+            transition: background 0.2s ease;
+        }
+
+        .grant-item:hover {
+            background: var(--light-blue);
+            border-color: var(--secondary-blue);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .grant-item:hover::before {
+            background: var(--secondary-blue);
+        }
+
+        .grant-item.active {
+            background: var(--light-blue);
+            border-color: var(--primary-blue);
+            box-shadow: var(--shadow-md);
+        }
+
+        .grant-item.active::before {
+            background: var(--primary-blue);
+        }
+
+        .grant-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-size: 14px;
+            letter-spacing: -0.025em;
+        }
+
+        .grant-details {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .grant-amount {
+            font-weight: 500;
+            color: var(--accent-teal);
+        }
+
+        .grant-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--success-green);
+            margin-top: 4px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success-green);
+        }
+
+        .chat-container {
+            flex: 1;
+            background: var(--surface-white);
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid var(--border-light);
+        }
+
+        .chat-header {
+            background: var(--surface-light);
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .bot-avatar {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-white);
+            font-size: 18px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .chat-title-section {
+            flex: 1;
+        }
+
+        .chat-title {
+            color: var(--text-primary);
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            letter-spacing: -0.025em;
+        }
+
+        .chat-subtitle {
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--success-green);
+            font-size: 12px;
+            font-weight: 500;
+            padding: 6px 12px;
+            background: rgba(5, 150, 105, 0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(5, 150, 105, 0.2);
+        }
+
+        .status-pulse {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success-green);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            background: var(--surface-white);
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            max-width: 85%;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .message.user .message-avatar {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: var(--text-white);
+        }
+
+        .message.bot .message-avatar {
+            background: var(--surface-medium);
+            color: var(--text-secondary);
+        }
+
+        .message-content {
+            padding: 16px 20px;
+            border-radius: 16px;
+            position: relative;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: var(--text-white);
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.bot .message-content {
+            background: var(--surface-light);
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+            border-bottom-left-radius: 4px;
+        }
+
+        .citation {
+            background: linear-gradient(135deg, #FEF7CD, #FEF3C7);
+            border: 1px solid #F59E0B;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 12px;
+            font-size: 12px;
+        }
+
+        .citation-title {
+            font-weight: 600;
+            color: #92400E;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .citation-text {
+            color: #78350F;
+            font-style: italic;
+            line-height: 1.4;
+        }
+
+        .chat-input-container {
+            padding: 24px;
+            border-top: 1px solid var(--border-light);
+            background: var(--surface-light);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+            max-width: 100%;
+        }
+
+        .chat-input {
+            flex: 1;
+            border: 2px solid var(--border-light);
+            border-radius: 24px;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            resize: none;
+            max-height: 120px;
+            outline: none;
+            transition: all 0.2s ease;
+            background: var(--surface-white);
+        }
+
+        .chat-input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(46, 91, 186, 0.1);
+        }
+
+        .send-button {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: var(--text-white);
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-md);
+        }
+
+        .send-button:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .send-button:disabled {
+            background: var(--border-medium);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .suggested-questions {
+            margin-bottom: 16px;
+        }
+
+        .suggestions-title {
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .suggestion-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .suggestion-chip {
+            background: var(--surface-white);
+            border: 1px solid var(--border-medium);
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-secondary);
+        }
+
+        .suggestion-chip:hover {
+            background: var(--light-blue);
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+            transform: translateY(-1px);
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-secondary);
+            font-style: italic;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            padding: 0 24px 24px;
+        }
+
+        .typing-indicator.show {
+            opacity: 1;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--text-tertiary);
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+            30% {
+                transform: translateY(-8px);
+                opacity: 1;
+            }
+        }
+
+        .analytics-panel {
+            width: 320px;
+            background: var(--surface-white);
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            padding: 24px;
+            height: fit-content;
+            border: 1px solid var(--border-light);
+        }
+
+        .analytics-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .analytics-title {
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+        }
+
+        .metric-card {
+            background: var(--surface-light);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .metric-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 4px;
+            letter-spacing: -0.025em;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .recent-activity {
+            margin-top: 24px;
+        }
+
+        .activity-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .activity-item {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 12px;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-time {
+            color: var(--text-tertiary);
+            font-weight: 500;
+        }
+
+        .activity-text {
+            color: var(--text-secondary);
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 1400px) {
+            .analytics-panel {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+                padding: 16px;
+                gap: 16px;
+            }
+            
+            .sidebar {
+                width: 100%;
+                order: 2;
+            }
+            
+            .chat-container {
+                order: 1;
+            }
+
+            .enterprise-header {
+                padding: 12px 16px;
+            }
+
+            .header-title {
+                font-size: 14px;
+            }
+        }
+
+        /* Custom scrollbar */
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: var(--surface-light);
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--border-medium);
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: var(--text-tertiary);
+        }
+    </style>
+</head>
+<body>
+    <div class="enterprise-header">
+        <div class="logo-section">
+            <div class="header-title">Research Enterprise - Grant Contract Assistant</div>
+        </div>
+        <div class="user-section">
+            <span class="user-name">Dr. Sarah Chen</span>
+            <div class="user-avatar">SC</div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <span>📋</span>
+                <h3 class="sidebar-title">Active Grant Contracts</h3>
+            </div>
+            <ul class="grant-list">
+                <li class="grant-item active" data-grant="cihr-2024">
+                    <div class="grant-name">CIHR Operating Grant</div>
+                    <div class="grant-details">
+                        <span class="grant-amount">$2.4M CAD</span> • Expires: Dec 2026<br>
+                        <div class="grant-status">
+                            <div class="status-dot"></div>
+                            Active
+                        </div>
+                    </div>
+                </li>
+                <li class="grant-item" data-grant="nserc-2023">
+                    <div class="grant-name">NSERC Discovery Grant</div>
+                    <div class="grant-details">
+                        <span class="grant-amount">$180K CAD</span> • Expires: Mar 2026<br>
+                        <div class="grant-status">
+                            <div class="status-dot"></div>
+                            Active
+                        </div>
+                    </div>
+                </li>
+                <li class="grant-item" data-grant="nih-2024">
+                    <div class="grant-name">NIH R01 Grant</div>
+                    <div class="grant-details">
+                        <span class="grant-amount">$1.8M USD</span> • Expires: Aug 2027<br>
+                        <div class="grant-status">
+                            <div class="status-dot"></div>
+                            Active
+                        </div>
+                    </div>
+                </li>
+                <li class="grant-item" data-grant="cfi-2023">
+                    <div class="grant-name">CFI Infrastructure Grant</div>
+                    <div class="grant-details">
+                        <span class="grant-amount">$890K CAD</span> • Expires: Nov 2025<br>
+                        <div class="grant-status">
+                            <div class="status-dot"></div>
+                            Active
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="bot-avatar">🤖</div>
+                <div class="chat-title-section">
+                    <h2 class="chat-title">Grant Contract Assistant</h2>
+                    <div class="chat-subtitle">Powered by Azure OpenAI & AI Document Intelligence</div>
+                </div>
+                <div class="status-indicator">
+                    <div class="status-pulse"></div>
+                    Online
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot">
+                    <div class="message-avatar">AI</div>
+                    <div class="message-content">
+                        <p>Good morning, Dr. Chen! I'm your AI-powered Grant Contract Assistant, integrated with your research enterprise systems. I have secure access to your 4 active grant contracts and can provide precise answers with direct citations from the original documents.</p>
+                        <p>I can assist you with contract terms, allowable expenses, reporting requirements, budget modifications, compliance matters, and administrative procedures.</p>
+                        
+                        <div class="suggested-questions">
+                            <h4 class="suggestions-title">Quick access to common queries:</h4>
+                            <div class="suggestion-chips">
+                                <div class="suggestion-chip" onclick="sendSuggestedQuestion('What are the allowable expenses for my CIHR grant?')">Allowable Expenses</div>
+                                <div class="suggestion-chip" onclick="sendSuggestedQuestion('When is my next NIH progress report due?')">Report Deadlines</div>
+                                <div class="suggestion-chip" onclick="sendSuggestedQuestion('Can I purchase equipment over $25,000?')">Equipment Purchases</div>
+                                <div class="suggestion-chip" onclick="sendSuggestedQuestion('What is the indirect cost rate for NSERC?')">Indirect Costs</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="message-avatar">AI</div>
+                <span>Grant Assistant is analyzing your query</span>
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+
+            <div class="chat-input-container">
+                <div class="input-wrapper">
+                    <textarea 
+                        class="chat-input" 
+                        id="chatInput" 
+                        placeholder="Ask me anything about your grant contracts..."
+                        rows="1"
+                    ></textarea>
+                    <button class="send-button" id="sendButton" onclick="sendMessage()">
+                        ➤
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="analytics-panel">
+            <div class="analytics-header">
+                <span>📊</span>
+                <h3 class="analytics-title">Usage Analytics</h3>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-value">127</div>
+                <div class="metric-label">Questions This Month</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-value">94%</div>
+                <div class="metric-label">Accuracy Rate</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-value">2.8s</div>
+                <div class="metric-label">Avg Response Time</div>
+            </div>
+
+            <div class="recent-activity">
+                <div class="activity-header">
+                    <span>🕒</span>
+                    <span>Recent Activity</span>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-time">2 hours ago</div>
+                    <div class="activity-text">Dr. Martinez queried NIH budget modification procedures</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-time">5 hours ago</div>
+                    <div class="activity-text">Research Admin reviewed CIHR reporting requirements</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-time">1 day ago</div>
+                    <div class="activity-text">Dr. Johnson verified equipment approval thresholds</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentGrant = 'cihr-2024';
+        let isTyping = false;
+
+        const grantData = {
+            'cihr-2024': {
+                name: 'CIHR Operating Grant',
+                value: '$2.4M CAD',
+                expires: 'December 2026'
+            },
+            'nserc-2023': {
+                name: 'NSERC Discovery Grant', 
+                value: '$180K CAD',
+                expires: 'March 2026'
+            },
+            'nih-2024': {
+                name: 'NIH R01 Grant',
+                value: '$1.8M USD',
+                expires: 'August 2027'
+            },
+            'cfi-2023': {
+                name: 'CFI Infrastructure Grant',
+                value: '$890K CAD', 
+                expires: 'November 2025'
+            }
+        };
+
+        const responses = {
+            'allowable expenses': {
+                answer: "For your CIHR Operating Grant, allowable expenses include direct personnel costs (salaries, wages, benefits), research supplies and materials, essential travel for research purposes, and knowledge dissemination activities. Equipment purchases under $25,000 CAD are permitted without pre-approval, while larger equipment acquisitions require detailed justification and competitive procurement.",
+                citation: {
+                    title: "CIHR Operating Grant Agreement - Section 4.2: Eligible Expenditures",
+                    text: "Eligible expenses shall include personnel costs, research supplies, travel, and equipment purchases not exceeding $25,000 CAD without prior written approval from CIHR."
+                }
+            },
+            'report deadlines': {
+                answer: "Your NIH R01 Grant requires comprehensive annual progress reports submitted no later than 60 days before each budget period begins. For your current grant cycle, the next annual progress report is due June 1, 2025. Additionally, a detailed final report must be submitted within 90 days of project completion, including financial reconciliation and research outcomes.",
+                citation: {
+                    title: "NIH R01 Grant Agreement - Section 7.1: Reporting Requirements",
+                    text: "Annual progress reports must be submitted no later than 60 days prior to the beginning of each budget period, with comprehensive final reports due within 90 days of project completion."
+                }
+            },
+            'equipment purchases': {
+                answer: "Equipment purchases over $25,000 CAD require pre-approval from the funding agency. For your CIHR grant, you must submit a budget modification request through ResearchNet. The request should include equipment specifications, justification for need, and three competitive vendor quotes. Approval typically takes 4-6 weeks.",
+                citation: {
+                    title: "CIHR Operating Grant Agreement - Section 4.3: Capital Equipment",
+                    text: "Capital equipment purchases exceeding $25,000 CAD require prior written approval and must be supported by competitive quotations, technical specifications, and justification demonstrating essential need for the research program."
+                }
+            },
+            'indirect cost rate': {
+                answer: "Your NSERC Discovery Grant has an indirect cost rate of 27% of the direct eligible costs. This is calculated automatically and paid separately to Research Services. The indirect costs are not included in your direct grant allocation of $180,000 CAD and are intended to support institutional research infrastructure.",
+                citation: {
+                    title: "NSERC Discovery Grant Terms - Section 3.4: Indirect Costs",
+                    text: "Indirect costs shall be calculated at 27% of eligible direct costs and will be paid directly to the administering institution to support research infrastructure and administrative support."
+                }
+            },
+            'travel expenses': {
+                answer: "For your NIH R01 Grant, travel expenses are allowable when directly related to the research project. This includes travel to research sites, conferences for results dissemination, and collaborative meetings. Economy class airfare is required for all flights, with business class only permitted for flights exceeding 9 hours. All travel must be pre-approved in the annual budget.",
+                citation: {
+                    title: "NIH R01 Grant Agreement - Section 5.2: Travel Expenses",
+                    text: "Travel expenses must be directly related to the research project and pre-approved in the annual budget. Economy class airfare is required for all flights under 9 hours duration, with documentation required for any upgrades."
+                }
+            },
+            'personnel changes': {
+                answer: "Changes to key personnel on your CIHR grant require prior written approval if they involve the Principal Investigator or Co-Investigators listed in the original application. Supporting staff changes can be made without approval but must be reported in the annual progress report. All personnel must meet CIHR's eligibility requirements.",
+                citation: {
+                    title: "CIHR Operating Grant Agreement - Section 6.1: Personnel Changes",
+                    text: "Changes to Principal Investigators or Co-Investigators require prior written approval from CIHR. Changes to supporting personnel must be documented in annual progress reports and all personnel must maintain eligibility as per CIHR policies."
+                }
+            }
+        };
+
+        function sendSuggestedQuestion(question) {
+            document.getElementById('chatInput').value = question;
+            sendMessage();
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message || isTyping) return;
+            
+            // Add user message
+            addMessage(message, true);
+            input.value = '';
+            
+            // Show typing indicator
+            showTyping();
+            
+            // Simulate AI response delay
+            setTimeout(() => {
+                hideTyping();
+                generateResponse(message);
+            }, 1500 + Math.random() * 1000);
+        }
+
+        function addMessage(content, isUser = false, citation = null) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            
+            let citationHtml = '';
+            if (citation) {
+                citationHtml = `
+                    <div class="citation">
+                        <div class="citation-title">📑 ${citation.title}</div>
+                        <div class="citation-text">"${citation.text}"</div>
+                    </div>
+                `;
+            }
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${isUser ? 'SC' : 'AI'}</div>
+                <div class="message-content">
+                    <p>${content}</p>
+                    ${citationHtml}
+                </div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function generateResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            let response = null;
+            
+            // Simple keyword matching for demo
+            if (lowerMessage.includes('allowable') || lowerMessage.includes('expense')) {
+                response = responses['allowable expenses'];
+            } else if (lowerMessage.includes('report') || lowerMessage.includes('deadline')) {
+                response = responses['report deadlines'];
+            } else if (lowerMessage.includes('equipment') || lowerMessage.includes('25000') || lowerMessage.includes('25,000')) {
+                response = responses['equipment purchases'];
+            } else if (lowerMessage.includes('indirect') || lowerMessage.includes('rate') || lowerMessage.includes('nserc')) {
+                response = responses['indirect cost rate'];
+            } else if (lowerMessage.includes('travel')) {
+                response = responses['travel expenses'];
+            } else if (lowerMessage.includes('personnel') || lowerMessage.includes('staff')) {
+                response = responses['personnel changes'];
+            } else {
+                // Default response
+                const grant = grantData[currentGrant];
+                response = {
+                    answer: `I can help you with questions about your ${grant.name} (${grant.value}, expires ${grant.expires}). Please ask about specific topics like allowable expenses, reporting requirements, budget modifications, or compliance matters. I'll provide answers with direct citations from your grant agreement.`,
+                    citation: null
+                };
+            }
+            
+            addMessage(response.answer, false, response.citation);
+            
+            // Update analytics (simulated)
+            updateAnalytics();
+        }
+
+        function showTyping() {
+            isTyping = true;
+            document.getElementById('typingIndicator').classList.add('show');
+            document.getElementById('sendButton').disabled = true;
+        }
+
+        function hideTyping() {
+            isTyping = false;
+            document.getElementById('typingIndicator').classList.remove('show');
+            document.getElementById('sendButton').disabled = false;
+        }
+
+        function updateAnalytics() {
+            // Simulate real-time analytics updates
+            const questionCount = document.querySelector('.metric-value');
+            const currentCount = parseInt(questionCount.textContent);
+            questionCount.textContent = currentCount + 1;
+        }
+
+        // Handle grant selection
+        document.querySelectorAll('.grant-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.grant-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                currentGrant = this.dataset.grant;
+                
+                const grant = grantData[currentGrant];
+                addMessage(`Switched to ${grant.name}. I now have access to this grant's contract details and can answer specific questions about its terms and conditions.`, false);
+            });
+        });
+
+        // Handle Enter key in input
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Auto-resize textarea
+        document.getElementById('chatInput').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
+
+        // Simulate real-time updates
+        setInterval(() => {
+            const statusDot = document.querySelector('.status-pulse');
+            statusDot.style.background = statusDot.style.background === 'rgb(5, 150, 105)' ? '#059669' : '#10B981';
+        }, 3000);
+
+        console.log('🚀 Grant Contract Assistant Demo Loaded');
+        console.log('📊 Features: Azure OpenAI, AI Document Intelligence, Entra ID SSO');
+        console.log('🔐 Security: Role-based access control, Data encryption in transit/at rest');
+        console.log('📈 Analytics: Real-time usage tracking, Response accuracy monitoring');
+    </script>
+</body>
+</html>
