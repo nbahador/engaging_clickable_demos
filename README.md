@@ -1,7 +1,7 @@
 # Engaging Clickable Demos  
 ### For Stakeholder Preview, Executive Presentations & Internal Product Planning
 
-Interactive prototypes that bring future product ideas to life — empowering stakeholders and executives to explore concepts, provide feedback, and align on strategy efficiently.
+Interactive prototypes that bring future product ideas to life, empowering stakeholders and executives to explore concepts, provide feedback, and align on strategy efficiently.
 
 ---
 
@@ -10,7 +10,7 @@ Interactive prototypes that bring future product ideas to life — empowering st
 ### **AI-Powered Grant Assistant**  
 *Interactive Mock Demo for Stakeholder Preview*
 
-A clickable proof-of-concept showcasing how research staff can use an integrated AI assistant to instantly query grant contracts — helping visualize the potential of the future product.
+A clickable proof-of-concept showcasing how research staff can use an integrated AI assistant to instantly query grant contracts, helping visualize the potential of the future product.
 
 🔗 **Explore the Interactive Demos:**
 
