@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surgical Oncology AI Assistant - Centralized Patient Data Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Medical Color Palette */
+            --primary-blue: #1A56DB;
+            --primary-navy: #1E3A8A;
+            --secondary-teal: #0E7490;
+            --accent-green: #059669;
+            --light-blue: #E0F2FE;
+            --surface-white: #FFFFFF;
+            --surface-light: #F8FAFC;
+            --surface-medium: #F1F5F9;
+            --border-light: #E2E8F0;
+            --border-medium: #CBD5E1;
+            --text-primary: #1E293B;
+            --text-secondary: #475569;
+            --text-tertiary: #64748B;
+            --text-white: #FFFFFF;
+            --success-green: #059669;
+            --warning-amber: #D97706;
+            --error-red: #DC2626;
+            --radiology-yellow: #FEF7CD;
+            --pathology-purple: #EDE9FE;
+            --lab-blue: #E0F2FE;
+            --surgery-red: #FEE2E2;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--surface-light) 0%, var(--light-blue) 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        .enterprise-header {
+            background: var(--primary-navy);
+            color: var(--text-white);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            z-index: 100;
+        }
+
+        .enterprise-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--secondary-teal));
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .enterprise-logo {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-teal));
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-white);
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .header-title {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--light-blue);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary-teal), var(--accent-green));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-white);
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            max-width: 1800px;
+            margin: 0 auto;
+            width: 100%;
+            gap: 24px;
+            padding: 24px;
+        }
+
+        .sidebar {
+            width: 360px;
+            background: var(--surface-white);
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            padding: 24px;
+            height: fit-content;
+            border: 1px solid var(--border-light);
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .sidebar-title {
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+        }
+
+        .patient-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .patient-item {
+            padding: 16px;
+            background: var(--surface-light);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .patient-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: transparent;
+            transition: background 0.2s ease;
+        }
+
+        .patient-item:hover {
+            background: var(--light-blue);
+            border-color: var(--primary-blue);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .patient-item:hover::before {
+            background: var(--primary-blue);
+        }
+
+        .patient-item.active {
+            background: var(--light-blue);
+            border-color: var(--primary-blue);
+            box-shadow: var(--shadow-md);
+        }
+
+        .patient-item.active::before {
+            background: var(--primary-blue);
+        }
+
+        .patient-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-size: 14px;
+            letter-spacing: -0.025em;
+        }
+
+        .patient-details {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .patient-id {
+            font-weight: 500;
+            color: var(--accent-green);
+        }
+
+        .patient-condition {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--secondary-teal);
+            margin-top: 4px;
+            padding: 2px 8px;
+            background: rgba(14, 116, 144, 0.1);
+            border-radius: 12px;
+        }
+
+        .chat-container {
+            flex: 1;
+            background: var(--surface-white);
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid var(--border-light);
+        }
+
+        .chat-header {
+            background: var(--surface-light);
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .bot-avatar {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-teal));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-white);
+            font-size: 18px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .chat-title-section {
+            flex: 1;
+        }
+
+        .chat-title {
+            color: var(--text-primary);
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            letter-spacing: -0.025em;
+        }
+
+        .chat-subtitle {
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--success-green);
+            font-size: 12px;
+            font-weight: 500;
+            padding: 6px 12px;
+            background: rgba(5, 150, 105, 0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(5, 150, 105, 0.2);
+        }
+
+        .status-pulse {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success-green);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            background: var(--surface-white);
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            max-width: 85%;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .message.user .message-avatar {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-teal));
+            color: var(--text-white);
+        }
+
+        .message.bot .message-avatar {
+            background: var(--surface-medium);
+            color: var(--text-secondary);
+        }
+
+        .message-content {
+            padding: 16px 20px;
+            border-radius: 16px;
+            position: relative;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-teal));
+            color: var(--text-white);
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.bot .message-content {
+            background: var(--surface-light);
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+            border-bottom-left-radius: 4px;
+        }
+
+        .citation {
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 12px;
+            font-size: 12px;
+        }
+
+        .citation-radiology {
+            background: var(--radiology-yellow);
+            border: 1px solid #F59E0B;
+        }
+
+        .citation-pathology {
+            background: var(--pathology-purple);
+            border: 1px solid #8B5CF6;
+        }
+
+        .citation-lab {
+            background: var(--lab-blue);
+            border: 1px solid #0EA5E9;
+        }
+
+        .citation-surgery {
+            background: var(--surgery-red);
+            border: 1px solid #EF4444;
+        }
+
+        .citation-title {
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .citation-radiology .citation-title {
+            color: #92400E;
+        }
+
+        .citation-pathology .citation-title {
+            color: #5B21B6;
+        }
+
+        .citation-lab .citation-title {
+            color: #0C4A6E;
+        }
+
+        .citation-surgery .citation-title {
+            color: #991B1B;
+        }
+
+        .citation-text {
+            font-style: italic;
+            line-height: 1.4;
+        }
+
+        .citation-radiology .citation-text {
+            color: #78350F;
+        }
+
+        .citation-pathology .citation-text {
+            color: #4C1D95;
+        }
+
+        .citation-lab .citation-text {
+            color: #0C4A6E;
+        }
+
+        .citation-surgery .citation-text {
+            color: #991B1B;
+        }
+
+        .feedback-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            justify-content: flex-end;
+        }
+
+        .feedback-button {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid var(--border-medium);
+            background: var(--surface-white);
+            transition: all 0.2s ease;
+        }
+
+        .feedback-button.helpful {
+            color: var(--success-green);
+        }
+
+        .feedback-button.helpful:hover {
+            background: rgba(5, 150, 105, 0.1);
+            border-color: var(--success-green);
+        }
+
+        .feedback-button.incorrect {
+            color: var(--error-red);
+        }
+
+        .feedback-button.incorrect:hover {
+            background: rgba(220, 38, 38, 0.1);
+            border-color: var(--error-red);
+        }
+
+        .feedback-button.outdated {
+            color: var(--warning-amber);
+        }
+
+        .feedback-button.outdated:hover {
+            background: rgba(217, 119, 6, 0.1);
+            border-color: var(--warning-amber);
+        }
+
+        .chat-input-container {
+            padding: 24px;
+            border-top: 1px solid var(--border-light);
+            background: var(--surface-light);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+            max-width: 100%;
+        }
+
+        .chat-input {
+            flex: 1;
+            border: 2px solid var(--border-light);
+            border-radius: 24px;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            resize: none;
+            max-height: 120px;
+            outline: none;
+            transition: all 0.2s ease;
+            background: var(--surface-white);
+        }
+
+        .chat-input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.1);
+        }
+
+        .voice-input-button {
+            background: var(--surface-white);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-medium);
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .voice-input-button:hover {
+            background: var(--surface-light);
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+
+        .voice-input-button.listening {
+            background: var(--error-red);
+            color: var(--text-white);
+            border-color: var(--error-red);
+            animation: pulse 1s infinite;
+        }
+
+        .send-button {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-teal));
+            color: var(--text-white);
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-md);
+        }
+
+        .send-button:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .send-button:disabled {
+            background: var(--border-medium);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .suggested-questions {
+            margin-bottom: 16px;
+        }
+
+        .suggestions-title {
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .suggestion-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .suggestion-chip {
+            background: var(--surface-white);
+            border: 1px solid var(--border-medium);
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-secondary);
+        }
+
+        .suggestion-chip:hover {
+            background: var(--light-blue);
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+            transform: translateY(-1px);
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-secondary);
+            font-style: italic;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            padding: 0 24px 24px;
+        }
+
+        .typing-indicator.show {
+            opacity: 1;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--text-tertiary);
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+            30% {
+                transform: translateY(-8px);
+                opacity: 1;
+            }
+        }
+
+        .analytics-panel {
+            width: 320px;
+            background: var(--surface-white);
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            padding: 24px;
+            height: fit-content;
+            border: 1px solid var(--border-light);
+        }
+
+        .analytics-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .analytics-title {
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+        }
+
+        .metric-card {
+            background: var(--surface-light);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .metric-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 4px;
+            letter-spacing: -0.025em;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .recent-activity {
+            margin-top: 24px;
+        }
+
+        .activity-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .activity-item {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 12px;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-time {
+            color: var(--text-tertiary);
+            font-weight: 500;
+        }
+
+        .activity-text {
+            color: var(--text-secondary);
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 1400px) {
+            .analytics-panel {
+                display: none;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+                padding: 16px;
+                gap: 16px;
+            }
+            
+            .sidebar {
+                width: 100%;
+                order: 2;
+            }
+            
+            .chat-container {
+                order: 1;
+            }
+
+            .enterprise-header {
+                padding: 12px 16px;
+            }
+
+            .header-title {
+                font-size: 14px;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+        }
+
+        /* Custom scrollbar */
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: var(--surface-light);
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--border-medium);
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: var(--text-tertiary);
+        }
+    </style>
+</head>
+<body>
+    <div class="enterprise-header">
+        <div class="logo-section">
+            <div class="header-title">Surgical Oncology AI Assistant - Centralized Patient Data Platform</div>
+        </div>
+        <div class="user-section">
+            <span class="user-name">Dr. Sarah Chen, Surgical Oncology</span>
+            <div class="user-avatar">SC</div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <span>👥</span>
+                <h3 class="sidebar-title">Patient Records</h3>
+            </div>
+            <ul class="patient-list">
+                <li class="patient-item active" data-patient="patient-12345">
+                    <div class="patient-name">John A. Williamson (ID: 12345)</div>
+                    <div class="patient-details">
+                        <span class="patient-id">68 y/o Male</span> • Last Visit: 2025-07-15<br>
+                        <div class="patient-condition">
+                            Colorectal Cancer • Post-op Day 12
+                        </div>
+                    </div>
+                </li>
+                <li class="patient-item" data-patient="patient-23456">
+                    <div class="patient-name">Maria L. Rodriguez (ID: 23456)</div>
+                    <div class="patient-details">
+                        <span class="patient-id">52 y/o Female</span> • Last Visit: 2025-07-10<br>
+                        <div class="patient-condition">
+                            Breast Cancer • Pre-op
+                        </div>
+                    </div>
+                </li>
+                <li class="patient-item" data-patient="patient-34567">
+                    <div class="patient-name">Robert T. Johnson (ID: 34567)</div>
+                    <div class="patient-details">
+                        <span class="patient-id">74 y/o Male</span> • Last Visit: 2025-07-05<br>
+                        <div class="patient-condition">
+                            Pancreatic Cancer • Post-op Day 21
+                        </div>
+                    </div>
+                </li>
+                <li class="patient-item" data-patient="patient-45678">
+                    <div class="patient-name">Susan P. Miller (ID: 45678)</div>
+                    <div class="patient-details">
+                        <span class="patient-id">61 y/o Female</span> • Last Visit: 2025-06-28<br>
+                        <div class="patient-condition">
+                            Gastric Cancer • Follow-up
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="bot-avatar">⚕️</div>
+                <div class="chat-title-section">
+                    <h2 class="chat-title">Surgical Oncology AI Assistant</h2>
+                    <div class="chat-subtitle">Integrated with Centralized EHR, DICOM, Lab Reports & Clinical Data</div>
+                </div>
+                <div class="status-indicator">
+                    <div class="status-pulse"></div>
+                    Connected to Patient Data
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot">
+                    <div class="message-avatar">AI</div>
+                    <div class="message-content">
+                        <p>Good morning, Dr. Chen. I'm your Surgical Oncology AI Assistant, integrated with the Centralized Patient Data Platform. I have access to comprehensive patient records including EHR, DICOM imaging, lab reports, surgical notes, pathology reports, and historical data.</p>
+                        <p>I can help you query patient information, analyze trends, retrieve specific test results, and provide context-aware answers with proper citations from the source documents.</p>
+                        
+                        <div class="suggested-questions">
+                            <h4 class="suggestions-title">Try asking about:</h4>
+                            <div class="suggestion-chips">
+                                <div class="suggestion-chip" onclick="sendSuggestedQuestion('What were the findings in the latest pathology report for John Williamson?')">Pathology Findings</div>
+                                <div class="suggestion-chip" onclick="sendSuggestedQuestion('Show me the latest lab results for John Williamson')">Lab Results</div>
+                                <div class="suggestion-chip" onclick="sendSuggestedQuestion('What medications is John Williamson currently taking?')">Current Medications</div>
+                                <div class="suggestion-chip" onclick="sendSuggestedQuestion('Compare pre-op and post-op vital signs for John Williamson')">Vital Sign Trends</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="message-avatar">AI</div>
+                <span>Analyzing patient records and clinical data</span>
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+
+            <div class="chat-input-container">
+                <div class="input-wrapper">
+                    <textarea 
+                        class="chat-input" 
+                        id="chatInput" 
+                        placeholder="Ask about patient data, test results, or clinical information..."
+                        rows="1"
+                    ></textarea>
+                    <button class="voice-input-button" id="voiceButton" onclick="toggleVoiceInput()">
+                        🎤
+                    </button>
+                    <button class="send-button" id="sendButton" onclick="sendMessage()">
+                        ➤
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="analytics-panel">
+            <div class="analytics-header">
+                <span>📊</span>
+                <h3 class="analytics-title">Clinical Data Overview</h3>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-value">42</div>
+                <div class="metric-label">Documents in Patient Record</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-value">8</div>
+                <div class="metric-label">Lab Reports This Month</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-value">3.2s</div>
+                <div class="metric-label">Avg Response Time</div>
+            </div>
+
+            <div class="recent-activity">
+                <div class="activity-header">
+                    <span>🕒</span>
+                    <span>Recent Data Updates</span>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-time">Today, 08:45</div>
+                    <div class="activity-text">New pathology report uploaded (v2.1)</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-time">Yesterday, 16:30</div>
+                    <div class="activity-text">Post-op CT scan added to DICOM archive</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-time">Yesterday, 14:15</div>
+                    <div class="activity-text">Updated medication list with new prescriptions</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPatient = 'patient-12345';
+        let isTyping = false;
+        let isListening = false;
+        let recognition = null;
+
+        const patientData = {
+            'patient-12345': {
+                name: 'John A. Williamson',
+                id: '12345',
+                age: '68',
+                gender: 'Male',
+                condition: 'Colorectal Cancer',
+                status: 'Post-op Day 12'
+            },
+            'patient-23456': {
+                name: 'Maria L. Rodriguez',
+                id: '23456',
+                age: '52', 
+                gender: 'Female',
+                condition: 'Breast Cancer',
+                status: 'Pre-op'
+            },
+            'patient-34567': {
+                name: 'Robert T. Johnson',
+                id: '34567',
+                age: '74',
+                gender: 'Male',
+                condition: 'Pancreatic Cancer',
+                status: 'Post-op Day 21'
+            },
+            'patient-45678': {
+                name: 'Susan P. Miller',
+                id: '45678',
+                age: '61', 
+                gender: 'Female',
+                condition: 'Gastric Cancer',
+                status: 'Follow-up'
+            }
+        };
+
+        const responses = {
+            'pathology report': {
+                answer: "The most recent pathology report for John Williamson (July 15, 2025) shows moderately differentiated adenocarcinoma of the colon, Stage IIIB (pT3N1bM0). All resection margins are negative for malignancy. 3 out of 15 lymph nodes show metastatic involvement. The tumor shows microsatellite stability (MSS) and is KRAS wild-type. Immunohistochemistry is positive for CK20 and CDX2, consistent with colorectal primary.",
+                citation: {
+                    type: "pathology",
+                    title: "Pathology Report, 2025-07-15 (v2.1)",
+                    text: "Final Diagnosis: Moderately differentiated adenocarcinoma, colon, Stage IIIB (pT3N1bM0), with negative margins and 3/15 lymph nodes positive for metastasis."
+                }
+            },
+            'lab results': {
+                answer: "John Williamson's latest lab results from today show: WBC 8.2 K/μL (slightly elevated), Hemoglobin 10.8 g/dL (low), Platelets 225 K/μL, Creatinine 1.1 mg/dL, Albumin 3.2 g/dL (low). Liver function tests are within normal limits. CEA has decreased from 12.5 to 5.8 ng/mL since surgery, indicating good response to treatment.",
+                citation: {
+                    type: "lab",
+                    title: "Comprehensive Metabolic Panel & CBC, 2025-07-22",
+                    text: "Results show mild anemia (Hgb 10.8 g/dL) and hypoalbuminemia (Alb 3.2 g/dL) with otherwise stable parameters post-operatively."
+                }
+            },
+            'medications': {
+                answer: "John Williamson's current medications include: Oxycodone 5mg every 6 hours as needed for pain, Acetaminophen 650mg every 8 hours, Enoxaparin 40mg daily for DVT prophylaxis, Metoprolol 25mg twice daily for hypertension, and Docusate sodium 100mg twice daily for constipation prevention. He was on FOLFOX chemotherapy pre-operatively, which was completed 4 weeks before surgery.",
+                citation: {
+                    type: "surgery",
+                    title: "Medication Reconciliation, 2025-07-20 (v1.3)",
+                    text: "Current medications: Oxycodone 5mg q6h PRN, Acetaminophen 650mg q8h, Enoxaparin 40mg daily, Metoprolol 25mg BID, Docusate sodium 100mg BID."
+                }
+            },
+            'vital signs': {
+                answer: "Comparing pre-op and post-op vital signs for John Williamson: Pre-op averages were BP 138/82 mmHg, HR 72 bpm, Temp 98.6°F, SpO2 98%. Current post-op averages (last 48 hours) are BP 126/78 mmHg, HR 68 bpm, Temp 99.1°F, SpO2 97% on room air. He had a transient fever to 100.8°F on post-op day 2 that resolved with increased ambulation.",
+                citation: {
+                    type: "surgery",
+                    title: "Vital Signs Trend Report, 2025-07-10 to 2025-07-22",
+                    text: "Vital signs have remained stable post-operatively with transient fever on POD#2 that resolved spontaneously with improved mobility."
+                }
+            },
+            'imaging': {
+                answer: "The most recent CT scan from July 18, 2025 shows expected post-surgical changes from right hemicolectomy with no evidence of collections, abscess, or anastomotic leak. There is minimal residual postoperative ileus with some colonic distension but no obstruction. Small non-specific pulmonary nodules are stable from prior studies. No evidence of metastatic disease.",
+                citation: {
+                    type: "radiology",
+                    title: "CT Abdomen/Pelvis with Contrast, 2025-07-18",
+                    text: "Findings: Status post right hemicolectomy with expected anatomical changes. No evidence of postoperative complications or metastatic disease."
+                }
+            },
+            'surgical notes': {
+                answer: "The operative note from July 10, 2025 describes an uneventful laparoscopic right hemicolectomy with primary ileocolic anastomosis. Blood loss was estimated at 150mL. The tumor was located in the ascending colon, approximately 5cm from the ileocecal valve. The procedure took 215 minutes. The patient tolerated the procedure well and was transferred to PACU in stable condition.",
+                citation: {
+                    type: "surgery",
+                    title: "Operative Report, 2025-07-10 (v3.0)",
+                    text: "Procedure: Laparoscopic right hemicolectomy with primary anastomosis. Estimated blood loss: 150mL. No intraoperative complications."
+                }
+            }
+        };
+
+        function sendSuggestedQuestion(question) {
+            document.getElementById('chatInput').value = question;
+            sendMessage();
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message || isTyping) return;
+            
+            // Add user message
+            addMessage(message, true);
+            input.value = '';
+            input.style.height = 'auto';
+            
+            // Show typing indicator
+            showTyping();
+            
+            // Simulate AI response delay
+            setTimeout(() => {
+                hideTyping();
+                generateResponse(message);
+            }, 1500 + Math.random() * 1000);
+        }
+
+        function addMessage(content, isUser = false, citation = null, citationType = null) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            
+            let citationHtml = '';
+            if (citation) {
+                citationHtml = `
+                    <div class="citation citation-${citationType}">
+                        <div class="citation-title">📑 ${citation.title}</div>
+                        <div class="citation-text">"${citation.text}"</div>
+                    </div>
+                `;
+            }
+            
+            let feedbackHtml = '';
+            if (!isUser && citation) {
+                feedbackHtml = `
+                    <div class="feedback-buttons">
+                        <button class="feedback-button helpful" onclick="rateResponse(this, 'helpful')">Helpful</button>
+                        <button class="feedback-button incorrect" onclick="rateResponse(this, 'incorrect')">Incorrect</button>
+                        <button class="feedback-button outdated" onclick="rateResponse(this, 'outdated')">Outdated</button>
+                    </div>
+                `;
+            }
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${isUser ? 'SC' : 'AI'}</div>
+                <div class="message-content">
+                    <p>${content}</p>
+                    ${citationHtml}
+                    ${feedbackHtml}
+                </div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function generateResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            let response = null;
+            
+            // Simple keyword matching for demo
+            if (lowerMessage.includes('pathology') || lowerMessage.includes('biopsy') || lowerMessage.includes('tumor')) {
+                response = responses['pathology report'];
+            } else if (lowerMessage.includes('lab') || lowerMessage.includes('blood') || lowerMessage.includes('test') || lowerMessage.includes('result')) {
+                response = responses['lab results'];
+            } else if (lowerMessage.includes('medication') || lowerMessage.includes('drug') || lowerMessage.includes('prescription')) {
+                response = responses['medications'];
+            } else if (lowerMessage.includes('vital') || lowerMessage.includes('sign') || lowerMessage.includes('blood pressure') || lowerMessage.includes('temperature') || lowerMessage.includes('pulse')) {
+                response = responses['vital signs'];
+            } else if (lowerMessage.includes('imaging') || lowerMessage.includes('scan') || lowerMessage.includes('ct') || lowerMessage.includes('mri') || lowerMessage.includes('x-ray')) {
+                response = responses['imaging'];
+            } else if (lowerMessage.includes('surg') || lowerMessage.includes('operation') || lowerMessage.includes('procedure')) {
+                response = responses['surgical notes'];
+            } else {
+                // Default response
+                const patient = patientData[currentPatient];
+                response = {
+                    answer: `I can help you query information about ${patient.name} (${patient.age} y/o ${patient.gender} with ${patient.condition}, ${patient.status}). Try asking about specific clinical data like lab results, pathology findings, medications, imaging studies, or surgical details. I'll provide answers with citations from the source documents.`,
+                    citation: null
+                };
+            }
+            
+            addMessage(response.answer, false, response.citation, response.citation ? response.citation.type : null);
+            
+            // Update analytics (simulated)
+            updateAnalytics();
+        }
+
+        function showTyping() {
+            isTyping = true;
+            document.getElementById('typingIndicator').classList.add('show');
+            document.getElementById('sendButton').disabled = true;
+            document.getElementById('voiceButton').disabled = true;
+        }
+
+        function hideTyping() {
+            isTyping = false;
+            document.getElementById('typingIndicator').classList.remove('show');
+            document.getElementById('sendButton').disabled = false;
+            document.getElementById('voiceButton').disabled = false;
+        }
+
+        function updateAnalytics() {
+            // Simulate real-time analytics updates
+            const docCount = document.querySelector('.metric-value');
+            const currentCount = parseInt(docCount.textContent);
+            docCount.textContent = currentCount + 1;
+        }
+
+        function rateResponse(button, rating) {
+            const buttons = button.parentElement.querySelectorAll('.feedback-button');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                btn.style.opacity = '0.7';
+            });
+            
+            button.style.opacity = '1';
+            button.style.fontWeight = '600';
+            
+            console.log(`User rated response as: ${rating}`);
+            // In a real implementation, this would send feedback to the server
+        }
+
+        function toggleVoiceInput() {
+            if (!('webkitSpeechRecognition' in window)) {
+                alert("Speech recognition is not supported in this browser.");
+                return;
+            }
+            
+            if (isListening) {
+                stopVoiceInput();
+                return;
+            }
+            
+            recognition = new webkitSpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+            
+            recognition.onstart = function() {
+                isListening = true;
+                document.getElementById('voiceButton').classList.add('listening');
+                document.getElementById('chatInput').placeholder = "Listening...";
+            };
+            
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById('chatInput').value = transcript;
+                recognition.stop();
+            };
+            
+            recognition.onerror = function(event) {
+                console.error('Speech recognition error', event.error);
+                stopVoiceInput();
+            };
+            
+            recognition.onend = function() {
+                stopVoiceInput();
+            };
+            
+            recognition.start();
+        }
+        
+        function stopVoiceInput() {
+            if (recognition) {
+                recognition.stop();
+            }
+            isListening = false;
+            document.getElementById('voiceButton').classList.remove('listening');
+            document.getElementById('chatInput').placeholder = "Ask about patient data, test results, or clinical information...";
+        }
+
+        // Handle patient selection
+        document.querySelectorAll('.patient-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.patient-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                currentPatient = this.dataset.patient;
+                
+                const patient = patientData[currentPatient];
+                addMessage(`Now reviewing ${patient.name}'s records (${patient.age} y/o ${patient.gender}, ${patient.condition}, ${patient.status}). I have access to all clinical documents including EHR, DICOM imaging, lab reports, and surgical notes.`, false);
+            });
+        });
+
+        // Handle Enter key in input
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Auto-resize textarea
+        document.getElementById('chatInput').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
+
+        // Simulate real-time updates
+        setInterval(() => {
+            const statusDot = document.querySelector('.status-pulse');
+            statusDot.style.background = statusDot.style.background === 'rgb(5, 150, 105)' ? '#059669' : '#10B981';
+        }, 3000);
+
+        console.log('⚕️ Surgical Oncology AI Assistant Demo Loaded');
+        console.log('📊 Features: EHR Integration, DICOM Access, Natural Language Query, Temporal Reasoning');
+        console.log('🔐 Security: HIPAA Compliant, Data encryption in transit/at rest, Audit logging');
+        console.log('📈 Analytics: Response accuracy tracking, User feedback system');
+    </script>
+</body>
+</html>
