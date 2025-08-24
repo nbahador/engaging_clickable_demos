@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocal Care Model Metrics</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #34495e;
+            --accent: #3498db;
+            --text: #ecf0f1;
+            --border: #7f8c8d;
+            --metric-bg: #1a252f;
+            --card-bg: #2c3e50;
+            --value-bg: #16a085;
+            --hover-bg: #1abc9c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--primary);
+            color: var(--text);
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        
+        .section {
+            background-color: var(--secondary);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            border-bottom: 3px solid var(--border);
+            padding-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .metric-card {
+            background-color: var(--card-bg);
+            padding: 16px;
+            margin-bottom: 16px;
+            border-radius: 8px;
+            font-size: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .metric-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .metric-name {
+            margin-left: 10px;
+            text-transform: capitalize;
+        }
+        
+        .metric-values {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .value-pill {
+            background-color: var(--value-bg);
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            white-space: nowrap;
+            transition: background-color 0.2s ease;
+            text-transform: capitalize;
+        }
+        
+        .value-pill:hover {
+            background-color: var(--hover-bg);
+            cursor: pointer;
+        }
+        
+        .emoji {
+            font-size: 20px;
+            margin-right: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-title {
+                font-size: 20px;
+            }
+            
+            .metric-header {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="section">
+            <div class="section-title"><span class="emoji">✅</span>Voice Derived Metrics</div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">🗣️</span><span class="metric-name">Speech Fluency Status</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Fluent</span>
+                    <span class="value-pill">Disfluent</span>
+                    <span class="value-pill">Paused</span>
+                    <span class="value-pill">Interrupted</span>
+                    <span class="value-pill">Rushed</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">🔊</span><span class="metric-name">Vocal Energy Level</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">High Energy</span>
+                    <span class="value-pill">Moderate Energy</span>
+                    <span class="value-pill">Low Energy</span>
+                    <span class="value-pill">Flat Affect</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">💨</span><span class="metric-name">Breath Pattern Type</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Shallow Breathing</span>
+                    <span class="value-pill">Deep Breathing</span>
+                    <span class="value-pill">Irregular Breathing</span>
+                    <span class="value-pill">Normal Breathing</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">🎚️</span><span class="metric-name">Pitch Stability</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Stable Pitch</span>
+                    <span class="value-pill">Monotone</span>
+                    <span class="value-pill">High Variability</span>
+                    <span class="value-pill">Pitch Breaks</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">🧠</span><span class="metric-name">Cognitive Load Signal</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Low Load</span>
+                    <span class="value-pill">Moderate Load</span>
+                    <span class="value-pill">High Load</span>
+                    <span class="value-pill">Cognitive Drift Detected</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">🧍</span><span class="metric-name">Vocal Strength Indicator</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Strong Voice</span>
+                    <span class="value-pill">Weak Voice</span>
+                    <span class="value-pill">Fading Voice</span>
+                    <span class="value-pill">Inconsistent Projection</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">📈</span><span class="metric-name">Prosody Pattern</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Natural Prosody</span>
+                    <span class="value-pill">Flat Prosody</span>
+                    <span class="value-pill">Exaggerated Prosody</span>
+                    <span class="value-pill">Robotic Speech</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">🔎</span><span class="metric-name">Emotional Tone Detected</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Calm</span>
+                    <span class="value-pill">Anxious</span>
+                    <span class="value-pill">Fearful</span>
+                    <span class="value-pill">Sad</span>
+                    <span class="value-pill">Hopeful</span>
+                    <span class="value-pill">Irritated</span>
+                    <span class="value-pill">Confident</span>
+                    <span class="value-pill">Neutral</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">⏱️</span><span class="metric-name">Speech Tempo</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Slow</span>
+                    <span class="value-pill">Moderate</span>
+                    <span class="value-pill">Fast</span>
+                    <span class="value-pill">Irregular</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">📉</span><span class="metric-name">Vocal Clarity Score</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Clear</span>
+                    <span class="value-pill">Slurred</span>
+                    <span class="value-pill">Muffled</span>
+                    <span class="value-pill">Strained</span>
+                    <span class="value-pill">Sharp</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">⚠️</span><span class="metric-name">Vocal Baseline Deviation</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">No Deviation</span>
+                    <span class="value-pill">Mild Deviation</span>
+                    <span class="value-pill">Moderate Deviation</span>
+                    <span class="value-pill">Severe Deviation</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">📊</span><span class="metric-name">Mood Variability Index</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Stable Mood</span>
+                    <span class="value-pill">Gradual Shift</span>
+                    <span class="value-pill">Volatile Shift</span>
+                    <span class="value-pill">Declining Mood Trend</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">🕵️</span><span class="metric-name">Speech Content Richness</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Rich</span>
+                    <span class="value-pill">Average</span>
+                    <span class="value-pill">Repetitive</span>
+                    <span class="value-pill">Simplistic</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">🗯️</span><span class="metric-name">Social Engagement Marker</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Engaged</span>
+                    <span class="value-pill">Withdrawn</span>
+                    <span class="value-pill">Passive</span>
+                    <span class="value-pill">Responsive</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title"><span class="emoji">✅</span>Voice Based Outcome Metrics</div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">🧘</span><span class="metric-name">Emotional Regulation Outcome</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Anxiety Reduced</span>
+                    <span class="value-pill">Calmness Induced</span>
+                    <span class="value-pill">Distress Relieved</span>
+                    <span class="value-pill">Hope Elevated</span>
+                    <span class="value-pill">Mood Stabilized</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">🧠</span><span class="metric-name">Cognitive Awareness Flag</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Cognitive Stable</span>
+                    <span class="value-pill">Mild Decline Detected</span>
+                    <span class="value-pill">Attention Loss Signaled</span>
+                    <span class="value-pill">Memory Drift Flagged</span>
+                    <span class="value-pill">Recommend Stimulation</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">🤝</span><span class="metric-name">Patient Engagement Level</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">High Engagement</span>
+                    <span class="value-pill">Moderate Engagement</span>
+                    <span class="value-pill">Low Engagement</span>
+                    <span class="value-pill">Disengaged</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">💬</span><span class="metric-name">Support Intervention Triggered</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Relaxation Exercise Started</span>
+                    <span class="value-pill">Empathy Story Played</span>
+                    <span class="value-pill">Affirmation Sequence Delivered</span>
+                    <span class="value-pill">Educational Prompt Triggered</span>
+                    <span class="value-pill">Emotional Checkin Launched</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">📉</span><span class="metric-name">Emotional Risk Classification</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Low Risk</span>
+                    <span class="value-pill">Moderate Risk</span>
+                    <span class="value-pill">High Risk</span>
+                    <span class="value-pill">Critical Emotional State</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">📡</span><span class="metric-name">Triage Escalation Flag</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">No Action Needed</span>
+                    <span class="value-pill">Monitor Closely</span>
+                    <span class="value-pill">Escalate To Clinician</span>
+                    <span class="value-pill">Urgent Attention Required</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">🛠️</span><span class="metric-name">Personalization Update Required</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Tone Adjustment Needed</span>
+                    <span class="value-pill">Language Simplification Required</span>
+                    <span class="value-pill">Faster Pacing Preferred</span>
+                    <span class="value-pill">Slower Pacing Recommended</span>
+                    <span class="value-pill">Emotion Style Mismatch Detected</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">📈</span><span class="metric-name">Longitudinal Trend Status</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Stable Trend</span>
+                    <span class="value-pill">Gradual Decline</span>
+                    <span class="value-pill">Gradual Improvement</span>
+                    <span class="value-pill">Sudden Change</span>
+                    <span class="value-pill">Fluctuating Pattern</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">🤗</span><span class="metric-name">Caregiver Support Needed</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Support Not Needed</span>
+                    <span class="value-pill">Mild Stress Detected</span>
+                    <span class="value-pill">Burnout Risk Flagged</span>
+                    <span class="value-pill">Caregiver Crisis Mode</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">🔄</span><span class="metric-name">Self Awareness Feedback</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Feedback Given</span>
+                    <span class="value-pill">Positive Reinforcement Provided</span>
+                    <span class="value-pill">Coping Insight Shared</span>
+                    <span class="value-pill">Self Reflection Prompted</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">🫶</span><span class="metric-name">Belonging And Trust Score</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Strong Belonging</span>
+                    <span class="value-pill">Growing Trust</span>
+                    <span class="value-pill">Neutral Relationship</span>
+                    <span class="value-pill">Trust Erosion Detected</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">🔐</span><span class="metric-name">Consent Status Verified</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Consent Captured</span>
+                    <span class="value-pill">Consent Denied</span>
+                    <span class="value-pill">Consent Uncertain</span>
+                    <span class="value-pill">Reconfirmation Needed</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">🕰️</span><span class="metric-name">Wait Experience Quality</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Positive Experience</span>
+                    <span class="value-pill">Neutral Experience</span>
+                    <span class="value-pill">Anxious Wait</span>
+                    <span class="value-pill">Restless Behavior Detected</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title"><span class="emoji">✅</span>User Metrics</div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">🧑‍⚕️</span><span class="metric-name">User Role</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Patient</span>
+                    <span class="value-pill">Caregiver</span>
+                    <span class="value-pill">Nurse</span>
+                    <span class="value-pill">Physician</span>
+                    <span class="value-pill">Therapist</span>
+                    <span class="value-pill">Social Worker</span>
+                    <span class="value-pill">Other Staff</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">🏥</span><span class="metric-name">Care Setting</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Clinic Lobby</span>
+                    <span class="value-pill">Virtual Visit Home</span>
+                    <span class="value-pill">Hospital Room</span>
+                    <span class="value-pill">Rehabilitation Center</span>
+                    <span class="value-pill">Long Term Care</span>
+                    <span class="value-pill">Emergency Department</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">📅</span><span class="metric-name">Interaction Context</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Pre Consultation</span>
+                    <span class="value-pill">Post Consultation</span>
+                    <span class="value-pill">Pre Surgery</span>
+                    <span class="value-pill">Post Surgery</span>
+                    <span class="value-pill">Routine Checkin</span>
+                    <span class="value-pill">Emotional Support Session</span>
+                    <span class="value-pill">Caregiver Checkin</span>
+                    <span class="value-pill">Triage Assessment</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">🗣️</span><span class="metric-name">Communication Mode</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Monologue</span>
+                    <span class="value-pill">Dialogue With AI</span>
+                    <span class="value-pill">Dialogue With Clinician</span>
+                    <span class="value-pill">Group Discussion</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">🌐</span><span class="metric-name">Language Preference</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">English</span>
+                    <span class="value-pill">Spanish</span>
+                    <span class="value-pill">Mandarin</span>
+                    <span class="value-pill">French</span>
+                    <span class="value-pill">Arabic</span>
+                    <span class="value-pill">Other</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">🔊</span><span class="metric-name">Voice Profile Status</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Baseline Established</span>
+                    <span class="value-pill">Baseline Updated</span>
+                    <span class="value-pill">Vocal Fatigue Detected</span>
+                    <span class="value-pill">Voiceprint Verified</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-header"><span class="emoji">🎯</span><span class="metric-name">Engagement Level</span></div>
+                <div class="metric-values">
+                    <span class="value-pill">Active</span>
+                    <span class="value-pill">Passive</span>
+                    <span class="value-pill">Resistant</span>
+                    <span class="value-pill">Non Responsive</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
